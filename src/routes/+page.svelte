@@ -89,6 +89,12 @@
 	<div class="mb-8 flex items-center justify-between">
 		<h1 class="text-4xl font-bold">Todos</h1>
 		<div class="flex items-center gap-4">
+			<a
+				href="/blog"
+				class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+			>
+				Blog
+			</a>
 			{#if data.user}
 				<span class="text-sm text-gray-600">{data.user.email}</span>
 			{/if}

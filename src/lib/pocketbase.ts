@@ -13,3 +13,12 @@ export interface Todo {
 	created: string;
 	updated: string;
 }
+
+// Types for the posts collection
+export interface Post {
+	id: string;
+	title: string;
+	content: string;
+	created: string;
+	updated: string;
+}
