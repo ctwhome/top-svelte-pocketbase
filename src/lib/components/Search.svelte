@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pb, type Todo, type Post } from '$lib/pocketbase';
+	import { pb, type Todo, type Post } from '$lib/database';
 	import { debounce } from '$lib/utils/debounce';
 
 	let searchQuery = $state('');

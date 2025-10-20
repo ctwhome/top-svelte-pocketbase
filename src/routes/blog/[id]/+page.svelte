@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pb, type Post } from '$lib/pocketbase';
+	import { pb, type Post } from '$lib/database';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 

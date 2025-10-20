@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pb, type Todo } from '$lib/pocketbase';
+	import { pb, type Todo } from '$lib/database';
 	import { onMount, onDestroy } from 'svelte';
 
 	interface Props {

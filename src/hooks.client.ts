@@ -1,4 +1,4 @@
-import { pb } from '$lib/pocketbase';
+import { pb } from '$lib/database';
 
 // Sync PocketBase auth state with cookies
 pb.authStore.onChange(() => {

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { pb, type Todo } from '$lib/pocketbase';
-	import { authStore } from '$lib/stores/auth.svelte';
+	import { pb, type Todo, authStore } from '$lib/database';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import Header from '$lib/components/Header.svelte';
