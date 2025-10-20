@@ -10,8 +10,4 @@ declare global {
 	}
 }
 
-declare module '$env/static/private' {
-	export const POCKETBASE_URL: string;
-}
-
 export {};
