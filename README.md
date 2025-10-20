@@ -79,6 +79,11 @@ The schema includes:
   - `user` (relation) - Owner of the todo
   - API Rules: Users can only see/edit their own todos
 
+- **posts** collection
+  - `title` (text, required) - Post title
+  - `content` (editor) - Post content (supports rich text/markdown)
+  - Auto-generated `created` and `updated` timestamps
+
 ## Development
 
 ### Using Docker Compose (Recommended)
@@ -121,6 +126,7 @@ bun run dev
 ├── src/              # SvelteKit application
 ├── static/           # Static assets
 ├── scripts/          # Utility scripts
+│   ├── seed-data.ts      # Generate test data with Faker.js
 │   ├── export-schema.sh  # Export PocketBase schema
 │   └── import-schema.sh  # Import PocketBase schema
 ├── pb_data/          # PocketBase data (auto-generated, gitignored)
@@ -192,6 +198,30 @@ Migrations in `pb_migrations/` are automatically applied on PocketBase startup. 
 2. PocketBase can auto-generate migrations (see [PocketBase migrations docs](https://pocketbase.io/docs/migrations/))
 3. Or manually create migration files in `pb_migrations/`
 
+### Seeding Test Data
+
+For performance testing and development, you can generate bulk test data using the seeding script:
+
+```sh
+bun run seed
+```
+
+This will prompt you for:
+- Admin credentials for authentication
+- Whether to clear existing todos and posts first
+
+The script generates:
+- **1000 todos** with realistic names and descriptions
+- **500 blog posts** with varied content
+
+Features:
+- Uses [Faker.js](https://fakerjs.dev/) for realistic test data
+- Batched creation (100 records at a time) to avoid overwhelming the API
+- Progress tracking with real-time updates
+- Reusable - can be run multiple times
+
+**Note**: Make sure PocketBase is running (`docker compose up`) before running the seed script.
+
 ## Environment Variables
 
 | Variable | Description | Default |
@@ -228,6 +258,9 @@ bun run lint
 
 # Type check
 bun run check
+
+# Seed test data
+bun run seed
 ```
 
 ## Resources
