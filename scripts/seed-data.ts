@@ -50,19 +50,38 @@ async function authenticateAdmin(pb: PocketBase): Promise<void> {
 	}
 }
 
+async function promptUserEmail(): Promise<string> {
+	const rl = createInterface({
+		input: process.stdin,
+		output: process.stdout
+	});
+
+	return new Promise((resolve) => {
+		rl.question('Enter user email to assign todos to (default: user@user.com): ', (email) => {
+			rl.close();
+			resolve(email.trim() || 'user@user.com');
+		});
+	});
+}
+
 async function getOrCreateAdminUser(pb: PocketBase): Promise<string> {
+	const userEmail = await promptUserEmail();
+
 	try {
-		// Try to get the first user (you can modify this to use a specific user)
-		const users = await pb.collection('users').getList(1, 1);
-		if (users.items.length > 0) {
-			console.log(`✅ Using existing user: ${users.items[0].email}`);
-			return users.items[0].id;
+		// Try to find the user by email
+		const users = await pb.collection('users').getFullList({
+			filter: `email = "${userEmail}"`
+		});
+
+		if (users.length > 0) {
+			console.log(`✅ Using user: ${users[0].email}`);
+			return users[0].id;
 		}
 	} catch (err) {
-		console.error('Error fetching users:', err);
+		console.error('Error fetching user:', err);
 	}
 
-	throw new Error('No users found. Please create a user first in the PocketBase admin panel.');
+	throw new Error(`User with email "${userEmail}" not found. Please create this user first in the PocketBase admin panel.`);
 }
 
 function generateTodo(userId: string): Todo {

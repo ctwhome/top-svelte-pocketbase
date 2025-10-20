@@ -26,4 +26,4 @@ vite.config.ts.timestamp-*
 src/lib/paraglide
 
 # PocketBase
-pb_data
+pocketbase/pb_data

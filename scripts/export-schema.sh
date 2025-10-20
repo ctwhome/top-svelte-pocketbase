@@ -4,7 +4,7 @@
 # This script helps export your current PocketBase schema
 
 POCKETBASE_URL="${POCKETBASE_URL:-http://localhost:8090}"
-OUTPUT_FILE="./pb_schema/collections.json"
+OUTPUT_FILE="./pocketbase/pb_schema/collections.json"
 
 echo "📤 Exporting PocketBase schema..."
 echo "PocketBase URL: $POCKETBASE_URL"
@@ -16,7 +16,7 @@ echo "PocketBase URL: $POCKETBASE_URL"
 # 1. Go to $POCKETBASE_URL/_/
 # 2. Navigate to Settings → Import/Export
 # 3. Click "Export collections"
-# 4. Save the file to: pb_schema/collections.json
+# 4. Save the file to: pocketbase/pb_schema/collections.json
 
 echo "📋 Manual export steps:"
 echo "1. Open your browser to: ${POCKETBASE_URL}/_/"

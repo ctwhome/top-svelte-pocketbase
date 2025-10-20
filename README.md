@@ -53,12 +53,12 @@ Choose one of the following methods to set up the database schema:
 1. Go to `http://localhost:8090/_/`
 2. Navigate to **Settings** → **Import/Export**
 3. Click **"Import collections"**
-4. Select `pb_schema/collections.json`
+4. Select `pocketbase/pb_schema/collections.json`
 5. Review and click **"Confirm"**
 
 ### Method 2: Automatic Migrations (Recommended for Development)
 
-Migrations are automatically applied when PocketBase starts. The `pb_migrations/` directory contains:
+Migrations are automatically applied when PocketBase starts. The `pocketbase/pb_migrations/` directory contains:
 - `1_initial_schema.js` - Creates the todos collection with proper schema and API rules
 
 To verify migrations:
@@ -129,11 +129,13 @@ bun run dev
 │   ├── seed-data.ts      # Generate test data with Faker.js
 │   ├── export-schema.sh  # Export PocketBase schema
 │   └── import-schema.sh  # Import PocketBase schema
-├── pb_data/          # PocketBase data (auto-generated, gitignored)
-├── pb_schema/        # PocketBase schema exports
-│   └── collections.json  # Collections schema
-├── pb_migrations/    # PocketBase migrations
-│   └── 1_initial_schema.js  # Initial schema migration
+├── pocketbase/       # PocketBase database files
+│   ├── pb_data/          # PocketBase data (auto-generated, gitignored)
+│   ├── pb_schema/        # PocketBase schema exports
+│   │   └── collections.json  # Collections schema
+│   ├── pb_migrations/    # PocketBase migrations
+│   │   └── 1_initial_schema.js  # Initial schema migration
+│   └── pb_backups/       # PocketBase backups
 ├── docker-compose.yml
 └── README.md
 ```
@@ -175,7 +177,7 @@ To export your current PocketBase schema (useful after making changes):
 ./scripts/export-schema.sh
 ```
 
-This will guide you through exporting collections from the PocketBase admin UI to `pb_schema/collections.json`.
+This will guide you through exporting collections from the PocketBase admin UI to `pocketbase/pb_schema/collections.json`.
 
 #### Import Schema
 
@@ -188,15 +190,15 @@ To import the schema into a fresh PocketBase instance:
 Or follow the manual steps:
 1. Go to `http://localhost:8090/_/`
 2. Settings → Import/Export → Import collections
-3. Select `pb_schema/collections.json`
+3. Select `pocketbase/pb_schema/collections.json`
 
 #### Migrations
 
-Migrations in `pb_migrations/` are automatically applied on PocketBase startup. To add new migrations:
+Migrations in `pocketbase/pb_migrations/` are automatically applied on PocketBase startup. To add new migrations:
 
 1. Make changes in PocketBase admin
 2. PocketBase can auto-generate migrations (see [PocketBase migrations docs](https://pocketbase.io/docs/migrations/))
-3. Or manually create migration files in `pb_migrations/`
+3. Or manually create migration files in `pocketbase/pb_migrations/`
 
 ### Seeding Test Data
 
@@ -208,6 +210,7 @@ bun run seed
 
 This will prompt you for:
 - Admin credentials for authentication
+- User email to assign todos to (default: user@user.com)
 - Whether to clear existing todos and posts first
 
 The script generates:
