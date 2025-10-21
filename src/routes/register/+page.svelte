@@ -106,7 +106,7 @@
 
 			<p class="mt-4 text-center text-sm text-base-content/70">
 				Already have an account?
-				<a href="/login" class="font-medium text-primary hover:text-primary-focus">
+				<a href="/" class="font-medium text-primary hover:text-primary-focus">
 					Login
 				</a>
 			</p>

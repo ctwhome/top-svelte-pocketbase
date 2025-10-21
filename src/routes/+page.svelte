@@ -10,9 +10,9 @@
 	let loading = $state(true);
 
 	onMount(async () => {
-		// Check if user is authenticated
+		// Only fetch todos if user is authenticated
 		if (!pb.authStore.isValid) {
-			goto('/login');
+			loading = false;
 			return;
 		}
 
@@ -34,6 +34,11 @@
 	{#if loading}
 		<div class="py-8 text-center">
 			<p class="text-base-content/70">Loading...</p>
+		</div>
+	{:else if !pb.authStore.isValid}
+		<div class="py-12 text-center">
+			<h2 class="mb-4 text-2xl font-bold">Welcome!</h2>
+			<p class="text-base-content/70">Please login using the button in the header to view your todos.</p>
 		</div>
 	{:else}
 		<Todos initialTodos={todos} userId={pb.authStore.model?.id} {error} />

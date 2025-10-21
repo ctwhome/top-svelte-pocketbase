@@ -1,18 +1,23 @@
 <script lang="ts">
 	import { pb, type Todo, type Post } from '$lib/database';
 	import { debounce } from '$lib/utils/debounce';
+	import { goto } from '$app/navigation';
 
 	let searchQuery = $state('');
 	let searching = $state(false);
 	let todoResults = $state<Todo[]>([]);
 	let postResults = $state<Post[]>([]);
 	let showResults = $state(false);
+	let selectedIndex = $state(-1);
+	let allResults = $state<Array<{ type: 'todo' | 'post'; data: Todo | Post; url: string }>>([]);
 
 	async function performSearch(query: string) {
 		if (!query.trim()) {
 			todoResults = [];
 			postResults = [];
+			allResults = [];
 			showResults = false;
+			selectedIndex = -1;
 			return;
 		}
 
@@ -36,6 +41,14 @@
 
 			todoResults = todos.items;
 			postResults = posts.items;
+
+			// Build combined results for keyboard navigation
+			allResults = [
+				...todos.items.map(todo => ({ type: 'todo' as const, data: todo, url: '/' })),
+				...posts.items.map(post => ({ type: 'post' as const, data: post, url: `/blog/${post.id}` }))
+			];
+
+			selectedIndex = -1;
 		} catch (err) {
 			console.error('Search error:', err);
 		} finally {
@@ -54,7 +67,58 @@
 		const target = event.target as HTMLElement;
 		if (!target.closest('.search-container')) {
 			showResults = false;
+			selectedIndex = -1;
 		}
+	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		// Prevent arrow keys from moving cursor when dropdown is open
+		if ((event.key === 'ArrowDown' || event.key === 'ArrowUp') && showResults && allResults.length > 0) {
+			event.preventDefault();
+		}
+
+		switch (event.key) {
+			case 'ArrowDown':
+				if (!showResults || allResults.length === 0) return;
+				selectedIndex = selectedIndex < allResults.length - 1 ? selectedIndex + 1 : 0;
+				scrollToSelected();
+				break;
+			case 'ArrowUp':
+				if (!showResults || allResults.length === 0) return;
+				selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : allResults.length - 1;
+				scrollToSelected();
+				break;
+			case 'Enter':
+				if (!showResults || allResults.length === 0 || selectedIndex === -1) return;
+				event.preventDefault();
+				const selected = allResults[selectedIndex];
+				if (selected) {
+					showResults = false;
+					selectedIndex = -1;
+					goto(selected.url);
+				}
+				break;
+			case 'Escape':
+				if (!showResults) return;
+				event.preventDefault();
+				showResults = false;
+				selectedIndex = -1;
+				break;
+		}
+	}
+
+	function scrollToSelected() {
+		setTimeout(() => {
+			const selectedElement = document.querySelector(`[data-result-index="${selectedIndex}"]`);
+			selectedElement?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+		}, 0);
+	}
+
+	function getResultIndex(todoIndex: number, isPost = false): number {
+		if (isPost) {
+			return todoResults.length + todoIndex;
+		}
+		return todoIndex;
 	}
 </script>
 
@@ -83,6 +147,7 @@
 			onfocus={() => {
 				if (searchQuery.trim()) showResults = true;
 			}}
+			onkeydown={handleKeyDown}
 		/>
 	</label>
 
@@ -103,12 +168,17 @@
 							<li class="menu-title">
 								<span>Todos</span>
 							</li>
-							{#each todoResults as todo}
-								<li>
+							{#each todoResults as todo, i}
+								{@const index = getResultIndex(i)}
+								<li data-result-index={index}>
 									<a
 										href="/"
-										onclick={() => {
+										class:active={selectedIndex === index}
+										onclick={(e) => {
+											e.preventDefault();
 											showResults = false;
+											selectedIndex = -1;
+											goto('/');
 										}}
 									>
 										<svg
@@ -140,12 +210,17 @@
 							<li class="menu-title">
 								<span>Blog Posts</span>
 							</li>
-							{#each postResults as post}
-								<li>
+							{#each postResults as post, i}
+								{@const index = getResultIndex(i, true)}
+								<li data-result-index={index}>
 									<a
 										href="/blog/{post.id}"
-										onclick={() => {
+										class:active={selectedIndex === index}
+										onclick={(e) => {
+											e.preventDefault();
 											showResults = false;
+											selectedIndex = -1;
+											goto(`/blog/${post.id}`);
 										}}
 									>
 										<svg
