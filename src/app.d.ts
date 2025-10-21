@@ -10,4 +10,10 @@ declare global {
 	}
 }
 
+// unplugin-icons type definitions
+declare module '~icons/*' {
+	import type { SvelteComponent } from 'svelte';
+	export default SvelteComponent;
+}
+
 export {};

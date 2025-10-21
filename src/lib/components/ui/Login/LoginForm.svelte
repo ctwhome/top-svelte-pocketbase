@@ -1,5 +1,4 @@
 <script lang="ts">
-	import GoogleLoginButton from './GoogleLoginButton.svelte';
 	import EmailLoginForm from './EmailLoginForm.svelte';
 	import RegisterForm from './RegisterForm.svelte';
 
@@ -19,11 +18,7 @@
 		{#if isRegistering}
 			<RegisterForm on:registrationSuccess={handleRegistrationSuccess} />
 		{:else}
-			<div class="space-y-4">
-				<GoogleLoginButton />
-				<div class="divider">OR</div>
-				<EmailLoginForm />
-			</div>
+			<EmailLoginForm />
 		{/if}
 
 		<div class="mt-4 text-center">

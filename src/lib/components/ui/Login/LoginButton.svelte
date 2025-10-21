@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { authStore } from '$lib/database';
 	import LoginForm from './LoginForm.svelte';
-	import { Role } from '$lib/types';
 </script>
 
 <div>
 	<!-- Logged in -->
-	{#if $page.data.session}
+	{#if authStore.isAuthenticated}
 		<div class="dropdown dropdown-end">
 			<button
 				type="button"
@@ -14,49 +13,43 @@
 				aria-expanded="false"
 				class="hover:bg-base-200 flex h-12 w-12 items-center justify-center rounded-full transition active:scale-95"
 			>
-				<img
-					alt="User avatar"
-					draggable="false"
-					class="ring-primary ring-offset-base-100 size-8 cursor-pointer rounded-full ring-offset-2"
-					class:ring-2={$page.data.session?.user?.roles?.includes(Role.ADMIN)}
-					src={$page.data?.session?.user?.image ?? '/images/profile.avif'}
-					referrerpolicy="no-referrer"
-					on:error={(e: Event) => {
-						if (e.target instanceof HTMLImageElement) {
-							console.error('Image failed to load:', e.target.src);
-							e.target.onerror = null; // Prevent infinite loop
-							e.target.src = '/images/profile.avif';
-						}
-					}}
-				/>
+				<div class="ring-primary ring-offset-base-100 flex size-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white ring-offset-2">
+					{authStore.user?.email?.charAt(0).toUpperCase() || 'U'}
+				</div>
 			</button>
-			<ul class="menu dropdown-content rounded-box bg-base-100 z-1 w-52 p-2 shadow-sm" role="menu">
-				<li class="flex gap-2">
-					<a href="/profile" class="flex items-center gap-2">Profile</a>
+			<ul class="menu dropdown-content rounded-box bg-base-100 z-10 w-52 p-2 shadow-lg" role="menu">
+				<li class="menu-title px-4 py-2">
+					<span class="text-xs text-base-content/70">{authStore.user?.email}</span>
 				</li>
-				{#if $page.data.session?.user?.roles?.includes(Role.ADMIN)}
-					<li class="flex gap-2">
-						<a
-							href="/admin"
-							class="hover:text-primary-focus text-primary flex items-center gap-2 font-medium"
-						>
-							<span class="bg-primary/10 rounded-md p-1">Admin Panel</span>
-						</a>
-					</li>
-				{/if}
 				<div class="divider my-0"></div>
-				<form action="/auth/signout" method="POST">
-					<li class="flex gap-2">
-						<button type="submit" class="items-center gap-2">Logout</button>
-					</li>
-				</form>
+				<li>
+					<a href="/profile" class="flex items-center gap-2">
+						<svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+						</svg>
+						Profile
+					</a>
+				</li>
+				<div class="divider my-0"></div>
+				<li>
+					<button
+						type="button"
+						class="flex items-center gap-2 text-error"
+						onclick={() => authStore.logout()}
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+						</svg>
+						Logout
+					</button>
+				</li>
 			</ul>
 		</div>
 		<!-- Not logged in-->
 	{:else}
 		<div>
 			<div>
-				<label for="login-modal" class="modal-button btn btn-primary btn-md">Login access</label>
+				<label for="login-modal" class="modal-button btn btn-primary btn-md">Login</label>
 				<input id="login-modal" type="checkbox" class="modal-toggle" />
 				<div class="modal h-screen">
 					<div class="modal-box">

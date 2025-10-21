@@ -1,15 +1,14 @@
 <script lang="ts">
 	import PhKeyBold from '~icons/ph/key-bold';
 	import { createEventDispatcher } from 'svelte';
-	import { validateEmail, validatePassword, getAuthErrorMessage } from './utils';
-	import type { RegisterResponse } from './types';
+	import { authStore } from '$lib/database';
+	import { validateEmail, validatePassword, getAuthErrorMessage, closeLoginModal } from './utils';
 
 	const dispatch = createEventDispatcher<{
 		registrationSuccess: void;
 	}>();
 
 	let email = $state('');
-	let name = $state('');
 	let password = $state('');
 	let confirmPassword = $state('');
 	let error = $state('');
@@ -25,10 +24,6 @@
 
 		if (password !== confirmPassword) {
 			return 'Passwords do not match';
-		}
-
-		if (!name.trim()) {
-			return 'Name is required';
 		}
 
 		return null;
@@ -47,31 +42,21 @@
 		}
 
 		try {
-			const response = await fetch('/api/register', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					email: email.trim(),
-					password,
-					name: name.trim()
-				})
-			});
+			await authStore.register(email, password, confirmPassword);
 
-			const data: RegisterResponse = await response.json();
+			success = 'Registration successful! You are now logged in.';
 
-			if (!response.ok) {
-				error = data.error || 'Registration failed';
-				isLoading = false;
-				return;
-			}
-
-			success = 'Registration successful! You can now log in.';
-			// Clear sensitive data
+			// Clear form
+			email = '';
 			password = '';
 			confirmPassword = '';
+
 			dispatch('registrationSuccess');
+
+			// Close modal after 1.5 seconds
+			setTimeout(() => {
+				closeLoginModal();
+			}, 1500);
 		} catch (e) {
 			error = getAuthErrorMessage(e);
 			console.error('Registration error:', e);
@@ -90,20 +75,6 @@
 	aria-label="Registration form"
 >
 	<div class="space-y-3">
-		<div class="form-control-float">
-			<input
-				id="register-name"
-				bind:value={name}
-				type="text"
-				placeholder=" "
-				required
-				autocomplete="name"
-				disabled={isLoading}
-				aria-invalid={error && !name ? 'true' : undefined}
-			/>
-			<label for="register-name">Name</label>
-		</div>
-
 		<div class="form-control-float">
 			<input
 				id="register-email"

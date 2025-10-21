@@ -1,7 +1,6 @@
 <script lang="ts">
 	import PhKeyBold from '~icons/ph/key-bold';
-	import { signIn } from '@auth/sveltekit/client';
-	import { page } from '$app/stores';
+	import { authStore } from '$lib/database';
 	import { closeLoginModal, getAuthErrorMessage, validateEmail } from './utils';
 
 	let email = $state('');
@@ -22,24 +21,18 @@
 		}
 
 		try {
-			// Close modal before redirecting
+			await authStore.login(email, password);
+
+			// Close modal after successful login
 			closeLoginModal();
 
-			const result = await signIn('credentials', {
-				email,
-				password,
-				redirect: true,
-				callbackUrl: $page.url.pathname
-			});
-
-			if (!result?.ok) {
-				error = 'Invalid email or password';
-				isLoading = false;
-				return;
-			}
+			// Clear form
+			email = '';
+			password = '';
 		} catch (e) {
 			error = getAuthErrorMessage(e);
 			console.error('Sign in error:', e);
+		} finally {
 			isLoading = false;
 		}
 	}
