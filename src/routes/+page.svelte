@@ -2,7 +2,7 @@
 	import { pb, type Todo, authStore } from '$lib/database';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import Header from '$lib/components/Header.svelte';
+	import Header from '$lib/components/ui/Header.svelte';
 	import Todos from '$lib/components/Todos.svelte';
 
 	let todos = $state<Todo[]>([]);
@@ -30,9 +30,10 @@
 	});
 </script>
 
+<Header />
 <div class="container mx-auto max-w-4xl px-4 py-8">
 	{#if loading}
-		<div class="text-center py-8">
+		<div class="py-8 text-center">
 			<p class="text-gray-600">Loading...</p>
 		</div>
 	{:else}
