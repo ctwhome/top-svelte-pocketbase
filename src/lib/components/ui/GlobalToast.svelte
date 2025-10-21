@@ -14,6 +14,6 @@
 	position="bottom-center"
 	gutter={8}
 	toastOptions={{
-		style: 'background: rgba(40, 40, 40, 0.9); color: #FFF; font-weight: 500;'
+		style: 'background: hsl(var(--b3) / 0.9); color: hsl(var(--bc)); font-weight: 500;'
 	}}
 />

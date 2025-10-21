@@ -67,7 +67,7 @@
 	</div>
 	<div class="relative">
 		<input
-			class="input w-full rounded-md border-2 border-gray-300"
+			class="input w-full rounded-md border-2 border-base-300"
 			type="text"
 			bind:value={searchValue}
 			oninput={handleInput}

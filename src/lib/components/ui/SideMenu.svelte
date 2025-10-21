@@ -95,7 +95,7 @@
 <div bind:this={containerElement} class="side-menu-container sm:hidden">
 	<!-- Background overlay (max 60% opacity) -->
 	<div
-		class="pointer-events-none fixed inset-0 z-40 bg-black sm:hidden"
+		class="pointer-events-none fixed inset-0 z-40 bg-base-300 sm:hidden"
 		style="opacity: var(--overlay-opacity);"
 	></div>
 

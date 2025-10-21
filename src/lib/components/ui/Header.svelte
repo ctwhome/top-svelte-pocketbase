@@ -2,12 +2,18 @@
 	import Logo from '$lib/assets/icons/Logo.svelte';
 	import FeedbackButton from '$lib/components/ui/feedback/FeedbackButton.svelte';
 	import Login from '$lib/components/ui/Login/LoginButton.svelte';
+	import Search from '$lib/components/Search.svelte';
 	import { toggleMenu } from '$lib/stores/menu.store';
 	import IconamoonMenuBurgerHorizontalBold from '~icons/iconamoon/menu-burger-horizontal-bold';
 	import menuItems from '$lib/models/menu-itmes';
 
 	import ThemeChange from '$lib/components/ui/ThemeChange/ThemeChange.svelte';
 
+	interface Props {
+		showSearch?: boolean;
+	}
+
+	let { showSearch = true }: Props = $props();
 	let activeCategory = $state('');
 </script>
 
@@ -18,7 +24,7 @@
 		<!--Desktop Header-->
 		<header class="flex items-center gap-3 px-2 sm:px-0">
 			<button
-				class="hover:bg-base-200 rounded-md p-2 transition-colors duration-200 sm:hidden"
+				class="rounded-md p-2 transition-colors duration-200 hover:bg-base-200 sm:hidden"
 				onclick={toggleMenu}
 				aria-label="Open menu"
 			>
@@ -30,7 +36,12 @@
 			>
 				<Logo />
 			</a>
-
+			<div class="flex-1" />
+			{#if showSearch}
+				<div class="mt-4 max-w-2xl px-2 sm:px-0">
+					<Search />
+				</div>
+			{/if}
 			<!-- Desktop menu -->
 			<div class="z-10 hidden w-full flex-1 justify-end space-x-4 sm:flex lg:space-x-8">
 				{#each menuItems as link}

@@ -77,86 +77,100 @@
 </script>
 
 <!-- Create Todo Form -->
-<div class="mb-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-	<h2 class="mb-4 text-xl font-semibold">Create New Todo</h2>
-	<form onsubmit={(e) => { e.preventDefault(); createTodo(); }} class="space-y-4">
-		<div>
-			<label for="name" class="mb-1 block text-sm font-medium text-gray-700">
-				Task Name
-			</label>
-			<input
-				id="name"
-				type="text"
-				bind:value={newTodoName}
-				required
-				placeholder="What needs to be done?"
-				class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-			/>
-		</div>
+<div class="card bg-base-100 shadow-xl mb-8">
+	<div class="card-body">
+		<h2 class="card-title">Create New Todo</h2>
+		<form onsubmit={(e) => { e.preventDefault(); createTodo(); }} class="space-y-4">
+			<div class="form-control">
+				<label class="label" for="name">
+					<span class="label-text">Task Name</span>
+				</label>
+				<input
+					id="name"
+					type="text"
+					bind:value={newTodoName}
+					required
+					placeholder="What needs to be done?"
+					class="input input-bordered w-full"
+				/>
+			</div>
 
-		<div>
-			<label for="description" class="mb-1 block text-sm font-medium text-gray-700">
-				Description (optional)
-			</label>
-			<textarea
-				id="description"
-				bind:value={newTodoDescription}
-				rows="3"
-				placeholder="Add more details..."
-				class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-			></textarea>
-		</div>
+			<div class="form-control">
+				<label class="label" for="description">
+					<span class="label-text">Description (optional)</span>
+				</label>
+				<textarea
+					id="description"
+					bind:value={newTodoDescription}
+					rows="3"
+					placeholder="Add more details..."
+					class="textarea textarea-bordered w-full"
+				></textarea>
+			</div>
 
-		<button
-			type="submit"
-			disabled={creating || !newTodoName.trim()}
-			class="rounded-lg bg-blue-600 px-6 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-		>
-			{creating ? 'Creating...' : 'Add Todo'}
-		</button>
-	</form>
+			<button
+				type="submit"
+				disabled={creating || !newTodoName.trim()}
+				class="btn btn-primary"
+			>
+				{creating ? 'Creating...' : 'Add Todo'}
+			</button>
+		</form>
+	</div>
 </div>
 
 {#if error}
-	<div class="rounded-lg border border-red-300 bg-red-50 p-4 text-red-800">
-		<p class="font-semibold">Error:</p>
-		<p>{error}</p>
-		<p class="mt-2 text-sm">
-			Check the PocketBase API Rules for the 'todos' collection.
-		</p>
+	<div class="alert alert-error">
+		<svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+		</svg>
+		<div>
+			<div class="font-semibold">Error:</div>
+			<div>{error}</div>
+			<div class="text-sm">
+				Check the PocketBase API Rules for the 'todos' collection.
+			</div>
+		</div>
 	</div>
 {:else if todos.length === 0}
-	<div class="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
-		<p class="text-gray-600">No todos yet. Create one above!</p>
+	<div class="alert alert-info">
+		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+		</svg>
+		<span>No todos yet. Create one above!</span>
 	</div>
 {:else}
 	<div class="space-y-3">
 		{#each todos as todo (todo.id)}
-			<div class="flex items-start gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md">
-				<input
-					type="checkbox"
-					checked={todo.completed}
-					onchange={() => toggleTodo(todo)}
-					class="mt-1 h-5 w-5 cursor-pointer rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
-				/>
-				<div class="flex-1">
-					<h3
-						class="text-lg font-medium"
-						class:line-through={todo.completed}
-						class:text-gray-400={todo.completed}
-					>
-						{todo.name}
-					</h3>
-					{#if todo.Description}
-						<div
-							class="prose prose-sm mt-2 max-w-none text-gray-600"
-							class:text-gray-400={todo.completed}
-						>
-							{@html todo.Description}
+			<div class="card bg-base-100 shadow-sm hover:shadow-md transition">
+				<div class="card-body p-4">
+					<div class="flex items-start gap-4">
+						<input
+							type="checkbox"
+							checked={todo.completed}
+							onchange={() => toggleTodo(todo)}
+							class="checkbox checkbox-primary mt-1"
+						/>
+						<div class="flex-1">
+							<h3
+								class="text-lg font-medium"
+								class:line-through={todo.completed}
+								class:opacity-40={todo.completed}
+							>
+								{todo.name}
+							</h3>
+							{#if todo.Description}
+								<div
+									class="prose prose-sm mt-2 max-w-none"
+									class:opacity-40={todo.completed}
+								>
+									{@html todo.Description}
+								</div>
+							{/if}
+							<div class="mt-2 text-sm opacity-60">
+								Created: {new Date(todo.created).toLocaleDateString()}
+							</div>
 						</div>
-					{/if}
-					<div class="mt-2 text-sm text-gray-500">
-						Created: {new Date(todo.created).toLocaleDateString()}
 					</div>
 				</div>
 			</div>

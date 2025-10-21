@@ -61,18 +61,9 @@
 <svelte:window onclick={handleClickOutside} />
 
 <div class="search-container relative">
-	<div class="relative">
-		<input
-			type="text"
-			bind:value={searchQuery}
-			placeholder="Search todos and posts..."
-			class="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-			onfocus={() => {
-				if (searchQuery.trim()) showResults = true;
-			}}
-		/>
+	<label class="input input-bordered flex items-center gap-2">
 		<svg
-			class="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
+			class="h-5 w-5 opacity-70"
 			fill="none"
 			stroke="currentColor"
 			viewBox="0 0 24 24"
@@ -84,93 +75,105 @@
 				d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
 			/>
 		</svg>
-	</div>
+		<input
+			type="text"
+			bind:value={searchQuery}
+			placeholder="Search todos and posts..."
+			class="grow"
+			onfocus={() => {
+				if (searchQuery.trim()) showResults = true;
+			}}
+		/>
+	</label>
 
 	{#if showResults && searchQuery.trim()}
-		<div
-			class="absolute z-50 mt-2 w-full rounded-lg border border-gray-200 bg-white shadow-lg max-h-96 overflow-y-auto"
-		>
-			{#if searching}
-				<div class="p-4 text-center text-sm text-gray-600">Searching...</div>
-			{:else if todoResults.length === 0 && postResults.length === 0}
-				<div class="p-4 text-center text-sm text-gray-600">No results found</div>
-			{:else}
-				<!-- Todo Results -->
-				{#if todoResults.length > 0}
-					<div class="border-b border-gray-200 p-3">
-						<h3 class="text-xs font-semibold uppercase text-gray-500">Todos</h3>
+		<div class="card card-compact absolute z-50 mt-2 w-full bg-base-100 shadow-xl max-h-96 overflow-y-auto">
+			<div class="card-body p-0">
+				{#if searching}
+					<div class="p-4 text-center text-sm opacity-70">
+						<span class="loading loading-spinner loading-sm"></span>
+						<span class="ml-2">Searching...</span>
 					</div>
-					{#each todoResults as todo}
-						<a
-							href="/"
-							class="block border-b border-gray-100 p-3 hover:bg-gray-50 transition"
-							onclick={() => {
-								showResults = false;
-							}}
-						>
-							<div class="flex items-start gap-2">
-								<svg
-									class="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-600"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-									/>
-								</svg>
-								<div class="flex-1 min-w-0">
-									<p class="text-sm font-medium text-gray-900 truncate">{todo.name}</p>
-									{#if todo.Description}
-										<p class="text-xs text-gray-600 truncate">{todo.Description}</p>
-									{/if}
-								</div>
-							</div>
-						</a>
-					{/each}
-				{/if}
+				{:else if todoResults.length === 0 && postResults.length === 0}
+					<div class="p-4 text-center text-sm opacity-70">No results found</div>
+				{:else}
+					<ul class="menu menu-sm">
+						<!-- Todo Results -->
+						{#if todoResults.length > 0}
+							<li class="menu-title">
+								<span>Todos</span>
+							</li>
+							{#each todoResults as todo}
+								<li>
+									<a
+										href="/"
+										onclick={() => {
+											showResults = false;
+										}}
+									>
+										<svg
+											class="h-4 w-4 text-primary"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+											/>
+										</svg>
+										<div class="flex-1 min-w-0">
+											<div class="font-medium truncate">{todo.name}</div>
+											{#if todo.Description}
+												<div class="text-xs opacity-70 truncate">{todo.Description}</div>
+											{/if}
+										</div>
+									</a>
+								</li>
+							{/each}
+						{/if}
 
-				<!-- Post Results -->
-				{#if postResults.length > 0}
-					<div class="border-b border-gray-200 p-3">
-						<h3 class="text-xs font-semibold uppercase text-gray-500">Blog Posts</h3>
-					</div>
-					{#each postResults as post}
-						<a
-							href="/blog/{post.id}"
-							class="block border-b border-gray-100 p-3 hover:bg-gray-50 transition"
-							onclick={() => {
-								showResults = false;
-							}}
-						>
-							<div class="flex items-start gap-2">
-								<svg
-									class="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-600"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
-									/>
-								</svg>
-								<div class="flex-1 min-w-0">
-									<p class="text-sm font-medium text-gray-900 truncate">{post.title}</p>
-									<p class="text-xs text-gray-600 truncate">
-										{new Date(post.created).toLocaleDateString()}
-									</p>
-								</div>
-							</div>
-						</a>
-					{/each}
+						<!-- Post Results -->
+						{#if postResults.length > 0}
+							<li class="menu-title">
+								<span>Blog Posts</span>
+							</li>
+							{#each postResults as post}
+								<li>
+									<a
+										href="/blog/{post.id}"
+										onclick={() => {
+											showResults = false;
+										}}
+									>
+										<svg
+											class="h-4 w-4 text-secondary"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+											/>
+										</svg>
+										<div class="flex-1 min-w-0">
+											<div class="font-medium truncate">{post.title}</div>
+											<div class="text-xs opacity-70 truncate">
+												{new Date(post.created).toLocaleDateString()}
+											</div>
+										</div>
+									</a>
+								</li>
+							{/each}
+						{/if}
+					</ul>
 				{/if}
-			{/if}
+			</div>
 		</div>
 	{/if}
 </div>

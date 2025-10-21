@@ -114,7 +114,7 @@
 		<pre>{JSON.stringify(numberFiles, null, 2)}</pre>
 		{#each Object.values(tree) as item}
 			<div
-				class="cursor-pointer hover:bg-gray-500"
+				class="cursor-pointer hover:bg-base-300"
 				onclick={() => fileClicked((item as any).handle)}
 			>
 				{(item as any).name}

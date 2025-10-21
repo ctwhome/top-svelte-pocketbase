@@ -33,7 +33,7 @@
 <div class="container mx-auto max-w-4xl px-4 py-8">
 	{#if loading}
 		<div class="py-8 text-center">
-			<p class="text-gray-600">Loading...</p>
+			<p class="text-base-content/70">Loading...</p>
 		</div>
 	{:else}
 		<Todos initialTodos={todos} userId={pb.authStore.model?.id} {error} />

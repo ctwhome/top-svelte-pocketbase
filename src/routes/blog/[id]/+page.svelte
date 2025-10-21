@@ -22,21 +22,21 @@
 
 <div class="container mx-auto max-w-4xl px-4 py-8">
 	{#if loading}
-		<div class="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
-			<p class="text-gray-600">Loading post...</p>
+		<div class="rounded-lg border border-base-300 bg-base-200 p-8 text-center">
+			<p class="text-base-content/70">Loading post...</p>
 		</div>
 	{:else if error || !post}
-		<div class="rounded-lg border border-red-300 bg-red-50 p-4 text-red-800">
+		<div class="rounded-lg border border-error bg-error/10 p-4 text-error">
 			<p class="font-semibold">Error:</p>
 			<p>{error || 'Post not found'}</p>
 		</div>
 	{:else}
-		<article class="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+		<article class="rounded-lg border border-base-300 bg-base-100 p-8 shadow-sm">
 			<header class="mb-8">
-				<h1 class="text-4xl font-bold text-gray-900">
+				<h1 class="text-4xl font-bold text-base-content">
 					{post.title}
 				</h1>
-				<div class="mt-4 flex items-center gap-4 text-sm text-gray-600">
+				<div class="mt-4 flex items-center gap-4 text-sm text-base-content/70">
 					<time datetime={post.created}>
 						Published: {new Date(post.created).toLocaleDateString('en-US', {
 							year: 'numeric',
@@ -66,13 +66,13 @@
 	<div class="mt-8 flex items-center justify-between">
 		<a
 			href="/blog"
-			class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+			class="inline-flex items-center text-sm text-base-content/70 hover:text-base-content"
 		>
 			← Back to blog
 		</a>
 		<a
 			href="/"
-			class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+			class="inline-flex items-center text-sm text-base-content/70 hover:text-base-content"
 		>
 			Home
 		</a>
