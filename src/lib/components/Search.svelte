@@ -2,6 +2,7 @@
 	import { pb, type Todo, type Post } from '$lib/database';
 	import { debounce } from '$lib/utils/debounce';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	let searchQuery = $state('');
 	let searching = $state(false);
@@ -10,6 +11,7 @@
 	let showResults = $state(false);
 	let selectedIndex = $state(-1);
 	let allResults = $state<Array<{ type: 'todo' | 'post'; data: Todo | Post; url: string }>>([]);
+	let searchInputElement: HTMLInputElement | undefined = $state();
 
 	async function performSearch(query: string) {
 		if (!query.trim()) {
@@ -63,6 +65,13 @@
 		debouncedSearch(searchQuery);
 	});
 
+	// Window-level keyboard handler to ensure we catch all keyboard events
+	// This is more reliable than input-level handlers with DaisyUI
+	onMount(() => {
+		window.addEventListener('keydown', handleKeyDown);
+		return () => window.removeEventListener('keydown', handleKeyDown);
+	});
+
 	function handleClickOutside(event: MouseEvent) {
 		const target = event.target as HTMLElement;
 		if (!target.closest('.search-container')) {
@@ -72,26 +81,51 @@
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
+		// Only handle keyboard events if search input is focused or results are showing
+		const isSearchFocused = document.activeElement === searchInputElement;
+
+		console.log('🔍 Key pressed:', event.key);
+		console.log('   isSearchFocused:', isSearchFocused);
+		console.log('   showResults:', showResults);
+		console.log('   allResults.length:', allResults.length);
+		console.log('   selectedIndex (before):', selectedIndex);
+
+		// Only handle navigation keys when search is active
+		if (!isSearchFocused && !showResults) {
+			console.log('   ⏭️  Ignoring - search not active');
+			return;
+		}
+
 		// Prevent arrow keys from moving cursor when dropdown is open
 		if ((event.key === 'ArrowDown' || event.key === 'ArrowUp') && showResults && allResults.length > 0) {
 			event.preventDefault();
+			console.log('   ✅ preventDefault() called');
 		}
 
 		switch (event.key) {
 			case 'ArrowDown':
-				if (!showResults || allResults.length === 0) return;
+				if (!showResults || allResults.length === 0) {
+					console.log('   ❌ ArrowDown blocked: showResults =', showResults, 'length =', allResults.length);
+					return;
+				}
 				selectedIndex = selectedIndex < allResults.length - 1 ? selectedIndex + 1 : 0;
+				console.log('   ✅ ArrowDown: selectedIndex changed to', selectedIndex);
 				scrollToSelected();
 				break;
 			case 'ArrowUp':
-				if (!showResults || allResults.length === 0) return;
+				if (!showResults || allResults.length === 0) {
+					console.log('   ❌ ArrowUp blocked: showResults =', showResults, 'length =', allResults.length);
+					return;
+				}
 				selectedIndex = selectedIndex > 0 ? selectedIndex - 1 : allResults.length - 1;
+				console.log('   ✅ ArrowUp: selectedIndex changed to', selectedIndex);
 				scrollToSelected();
 				break;
 			case 'Enter':
 				if (!showResults || allResults.length === 0 || selectedIndex === -1) return;
 				event.preventDefault();
 				const selected = allResults[selectedIndex];
+				console.log('   ✅ Enter pressed, navigating to:', selected?.url);
 				if (selected) {
 					showResults = false;
 					selectedIndex = -1;
@@ -101,6 +135,7 @@
 			case 'Escape':
 				if (!showResults) return;
 				event.preventDefault();
+				console.log('   ✅ Escape pressed, closing results');
 				showResults = false;
 				selectedIndex = -1;
 				break;
@@ -141,13 +176,13 @@
 		</svg>
 		<input
 			type="text"
+			bind:this={searchInputElement}
 			bind:value={searchQuery}
 			placeholder="Search todos and posts..."
 			class="grow"
 			onfocus={() => {
 				if (searchQuery.trim()) showResults = true;
 			}}
-			onkeydown={handleKeyDown}
 		/>
 	</label>
 

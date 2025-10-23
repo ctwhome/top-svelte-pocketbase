@@ -2,6 +2,9 @@
 
 A modern full-stack template using SvelteKit for the frontend and PocketBase as the backend database.
 
+
+
+
 ## Tech Stack
 
 - **Frontend**: SvelteKit 2 with Svelte 5
@@ -9,6 +12,8 @@ A modern full-stack template using SvelteKit for the frontend and PocketBase as 
 - **Styling**: TailwindCSS 4
 - **Runtime**: Bun
 - **Containerization**: Docker Compose
+
+![readme](./README.excalidraw.png)
 
 ## Prerequisites
 
